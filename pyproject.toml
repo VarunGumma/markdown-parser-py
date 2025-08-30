@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markdown-parser-py"
+version = "0.1.0"
+description = "Parse, manipulate, and merge Markdown heading trees programmatically."
+readme = "README.md"
+authors = [
+  { name = "Varun Gumma", email = "varun230999@gmail.com" }
+]
+license = { file = "LICENSE" }
+keywords = ["markdown", "parser", "tree", "document", "heading", "manipulation", "merge", "outline"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Text Processing :: Markup",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Typing :: Typed"
+]
+requires-python = ">=3.10"
+dependencies = [
+  "regex>=2024.4.16"
+]
+
+[project.urls]
+Homepage = "https://github.com/VarunGumma/markdown-parser-py"
+Repository = "https://github.com/VarunGumma/markdown-parser-py"
+Issues = "https://github.com/VarunGumma/markdown-parser-py/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["tree", "node"]
+
+[tool.setuptools.dynamic]
+# (Optional) can move version to a single source if you later adopt dynamic versioning
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "black>=24.0",
+  "isort>=5.13",
+  "mypy>=1.8"
+]
