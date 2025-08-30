@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markdown-parser-py"
-version = "0.0.2"
+version = "0.0.3"
 description = "Parse, manipulate, and merge Markdown heading trees programmatically."
 readme = "README.md"
 authors = [
@@ -36,8 +36,7 @@ Repository = "https://github.com/VarunGumma/markdown-parser-py"
 Issues = "https://github.com/VarunGumma/markdown-parser-py/issues"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
-py-modules = ["tree", "node"]
+packages = ["markdown_parser"]
 
 [tool.setuptools.dynamic]
 # (Optional) can move version to a single source if you later adopt dynamic versioning

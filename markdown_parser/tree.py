@@ -1,5 +1,6 @@
 import regex as re
-from node import MarkdownNode
+from .node import MarkdownNode
+
 
 class MarkdownTree:
     HEADER_REGEX = re.compile(r"^(#{1,6})[ \t]+(.+)$", re.MULTILINE)

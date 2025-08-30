@@ -54,7 +54,7 @@ Each `MarkdownNode` stores:
 ## 🚀 Quick Start
 
 ```python
-from markdown_parser.src import MarkdownTree
+from markdown_parser import MarkdownTree
 
 doc = """
 # Intro
@@ -119,7 +119,7 @@ tree.remove_section('Intro.Advanced')  # removes that subtree
 You can merge content from another parsed Markdown document. Levels auto-adjust so the attached subtree root sits exactly one level below the chosen parent.
 
 ```python
-from markdown_parser.src import MarkdownTree
+from markdown_parser import MarkdownTree
 
 base = MarkdownTree()
 base.parse('# A\nIntro text.')
