@@ -4,26 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markdown-parser-py"
-version = "0.0.3"
-description = "Parse, manipulate, and merge Markdown heading trees programmatically."
+version = "1.0.0"
+repository = "https://github.com/VarunGumma/markdown-parser-py"
+description = "Parse, Manipulate, and Merge Markdown Heading Trees Programmatically."
 readme = "README.md"
+license = {text = "MIT"}
 authors = [
   { name = "Varun Gumma", email = "varun230999@gmail.com" }
 ]
-license = { file = "LICENSE" }
-keywords = ["markdown", "parser", "tree", "document", "heading", "manipulation", "merge", "outline"]
+keywords = ["markdown", "parser", "tree", "document"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
-  "Topic :: Text Processing :: Markup",
-  "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Operating System :: OS Independent",
-  "Typing :: Typed"
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 requires-python = ">=3.10"
 dependencies = [
