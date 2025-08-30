@@ -20,20 +20,17 @@ Turn raw Markdown into a manipulable heading tree, edit it programmatically, the
 
 ## 📦 Installation
 
-PyPI name not published yet. Once released:
-
 ```bash
 pip install markdown-parser-py
 ```
 
-For now, clone the repo and use directly:
+or, for an editable install
 
 ```bash
-git clone https://github.com/VarunGumma/markdown-parser-py.git
+git clone https://github.com/VarunGumma/markdown-parser-py
 cd markdown-parser-py
-python -c "from tree import MarkdownTree; print('Ready')"
+pip install -e ./
 ```
-
 
 ## 🧠 Core Concepts
 
@@ -57,7 +54,7 @@ Each `MarkdownNode` stores:
 ## 🚀 Quick Start
 
 ```python
-from tree import MarkdownTree
+from markdown_parser.src import MarkdownTree
 
 doc = """
 # Intro
@@ -122,7 +119,7 @@ tree.remove_section('Intro.Advanced')  # removes that subtree
 You can merge content from another parsed Markdown document. Levels auto-adjust so the attached subtree root sits exactly one level below the chosen parent.
 
 ```python
-from tree import MarkdownTree
+from markdown_parser.src import MarkdownTree
 
 base = MarkdownTree()
 base.parse('# A\nIntro text.')

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markdown-parser-py"
-version = "0.1.0"
+version = "0.0.2"
 description = "Parse, manipulate, and merge Markdown heading trees programmatically."
 readme = "README.md"
 authors = [
