@@ -29,16 +29,11 @@ pip install markdown-parser-py
 For now, clone the repo and use directly:
 
 ```bash
-git clone https://github.com/your-user/markdown-parser-py.git
+git clone https://github.com/VarunGumma/markdown-parser-py.git
 cd markdown-parser-py
 python -c "from tree import MarkdownTree; print('Ready')"
 ```
 
-You can also add the `src` directory to `PYTHONPATH` or use a editable install:
-
-```bash
-pip install -e .  # after adding a pyproject.toml / setup.cfg (see Roadmap)
-```
 
 ## 🧠 Core Concepts
 
