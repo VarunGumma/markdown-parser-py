@@ -1,3 +1,4 @@
 .DS_store
 dist/
 **/__pycache__/
+markdown_parser_py.egg-info/

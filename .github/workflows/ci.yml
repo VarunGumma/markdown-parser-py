@@ -20,7 +20,6 @@ jobs:
     strategy:
       matrix:
         python-version:
-        - '3.9'
         - '3.10'
         - '3.11'
         - '3.12'
@@ -35,12 +34,9 @@ jobs:
         allow-prereleases: true
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         enable-cache: true
 
-    - name: Install dependencies
-      run: uv pip install --system tox tox-uv
-
     - name: Run tox targets for ${{ matrix.python-version }}
-      run: tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
+      run: uvx --with tox-uv tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
