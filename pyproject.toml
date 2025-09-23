@@ -49,6 +49,7 @@ ignore_missing_imports = true
 [dependency-groups]
 dev = [
   "pytest>=8.0",
+  "pytest-cov>=7.0",
   "black>=24.0",
   "isort>=5.13",
   "mypy>=1.8"
