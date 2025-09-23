@@ -24,15 +24,13 @@ class MarkdownTree:
             self.root.add_content(markdown_text)
             return
 
-        last_pos = 0
         nodes = []
         for idx, (start, end, level, title) in enumerate(positions):
-            prev_content = markdown_text[last_pos:start].strip("\n ")
-            nodes.append((level, title, prev_content))
-            last_pos = end
-            if idx == len(positions) - 1:
-                trailing = markdown_text[end:].strip("\n ")
-                nodes.append((0, None, trailing))
+            start_of_next = None
+            if idx < len(positions) - 1:
+                start_of_next = positions[idx+1][0]
+            content = markdown_text[end:start_of_next].strip("\n")
+            nodes.append((level, title, content))
 
         stack = [self.root]
         for level, title, content in nodes:
