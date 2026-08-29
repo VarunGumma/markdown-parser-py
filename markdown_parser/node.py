@@ -5,11 +5,11 @@ class MarkdownNode:
     def __init__(
         self, level: int, title: str, parent: MarkdownNode | None = None
     ) -> None:
-        self.level = level  # Heading level (0=root, 1=#, etc.)
-        self.title = title  # Heading text
+        self.level: int = level  # Heading level (0=root, 1=#, etc.)
+        self.title: str = title  # Heading text
         self.content: list[str] = []  # List of raw markdown strings (any content)
         self.children: list[MarkdownNode] = []  # List of child MarkdownNode(s)
-        self.parent = parent  # Parent node reference
+        self.parent: MarkdownNode | None = parent  # Parent node reference
 
     def add_child(self, node: MarkdownNode) -> None:
         self.children.append(node)

@@ -9,7 +9,7 @@ class MarkdownTree:
     HEADER_REGEX = re.compile(r"^(#{1,6})[ \t]+(.+)$", re.MULTILINE)
 
     def __init__(self) -> None:
-        self.root = MarkdownNode(0, "ROOT")
+        self.root: MarkdownNode = MarkdownNode(0, "ROOT")
 
     def parse(self, markdown_text: str) -> None:
         """Parse markdown text into the tree structure based on headings and content."""
