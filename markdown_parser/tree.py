@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import regex as re
 
 from .node import MarkdownNode
@@ -6,10 +8,10 @@ from .node import MarkdownNode
 class MarkdownTree:
     HEADER_REGEX = re.compile(r"^(#{1,6})[ \t]+(.+)$", re.MULTILINE)
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.root = MarkdownNode(0, "ROOT")
 
-    def parse(self, markdown_text: str):
+    def parse(self, markdown_text: str) -> None:
         """Parse markdown text into the tree structure based on headings and content."""
         positions = []
         for match in self.HEADER_REGEX.finditer(markdown_text):
@@ -84,7 +86,7 @@ class MarkdownTree:
         return False
 
     def add_section(
-        self, parent_path: str, title: str, content=""
+        self, parent_path: str, title: str, content: str = ""
     ) -> MarkdownNode | None:
         """
         Add a new section under the specified parent by dot-separated path.
@@ -111,17 +113,17 @@ class MarkdownTree:
         """Generate full markdown text from the tree."""
         return self.root.dump()
 
-    def visualize(self):
+    def visualize(self) -> None:
         """Print heading hierarchy as a tree."""
         self.root.print_tree()
 
     def attach_subtree(
         self,
         target_path: str,
-        source_tree: "MarkdownTree",
+        source_tree: MarkdownTree,
         source_path: str | None = None,
         max_level: int = 6,
-    ):
+    ) -> list[MarkdownNode]:
         """Attach a subtree (or all top-level sections) from source_tree under target_path.
 
         target_path: path in THIS tree designating parent ("" or ROOT for root)
@@ -150,7 +152,7 @@ class MarkdownTree:
             per_node = False
             base_delta = (parent.level + 1) - node.level
 
-        attached = []
+        attached: list[MarkdownNode] = []
         for sn in source_nodes:
             delta = (parent.level + 1) - sn.level if per_node else base_delta
             clone = sn.copy_with_level_delta(delta, max_level=max_level)
