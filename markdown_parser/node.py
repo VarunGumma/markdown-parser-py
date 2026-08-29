@@ -1,25 +1,28 @@
+from __future__ import annotations
+
+
 class MarkdownNode:
-    def __init__(self, level, title, parent=None):
+    def __init__(self, level: int, title: str, parent: MarkdownNode | None = None):
         self.level = level  # Heading level (0=root, 1=#, etc.)
         self.title = title  # Heading text
-        self.content = []  # List of raw markdown strings (any content)
-        self.children = []  # List of child MarkdownNode(s)
+        self.content: list[str] = []  # List of raw markdown strings (any content)
+        self.children: list[MarkdownNode] = []  # List of child MarkdownNode(s)
         self.parent = parent  # Parent node reference
 
-    def add_child(self, node):
+    def add_child(self, node: MarkdownNode):
         self.children.append(node)
         node.parent = self
 
-    def add_content(self, text):
+    def add_content(self, text: str):
         if text.strip():
             self.content.append(text.rstrip())
 
-    def remove_child(self, node):
+    def remove_child(self, node: MarkdownNode):
         self.children.remove(node)
 
     def dump(self) -> str:
         """Generate full markdown string from node tree recursively."""
-        lines = []
+        lines: list[str] = []
         if self.level > 0:
             lines.append("#" * self.level + " " + self.title)
         if self.content:
@@ -28,7 +31,7 @@ class MarkdownNode:
             lines.append(child.dump())
         return "\n\n".join(lines)
 
-    def print_tree(self, indent="", last=True):
+    def print_tree(self, indent: str = "", last: bool = True):
         """Print a tree-like structure of headings similar to Linux `tree` command."""
         prefix = indent + ("└── " if last else "├── ")
         if self.level > 0:
