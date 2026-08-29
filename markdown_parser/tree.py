@@ -1,4 +1,5 @@
 import regex as re
+
 from .node import MarkdownNode
 
 
@@ -28,7 +29,7 @@ class MarkdownTree:
         for idx, (start, end, level, title) in enumerate(positions):
             start_of_next = None
             if idx < len(positions) - 1:
-                start_of_next = positions[idx+1][0]
+                start_of_next = positions[idx + 1][0]
             content = markdown_text[end:start_of_next].strip("\n")
             nodes.append((level, title, content))
 
