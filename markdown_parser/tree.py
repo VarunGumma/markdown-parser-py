@@ -13,7 +13,7 @@ class MarkdownTree:
 
     def parse(self, markdown_text: str) -> None:
         """Parse markdown text into the tree structure based on headings and content."""
-        positions = []
+        positions: list[tuple[int, int, int, str]] = []
         for match in self.HEADER_REGEX.finditer(markdown_text):
             positions.append(
                 (
@@ -27,8 +27,8 @@ class MarkdownTree:
             self.root.add_content(markdown_text)
             return
 
-        nodes = []
-        for idx, (start, end, level, title) in enumerate(positions):
+        nodes: list[tuple[int, str, str]] = []
+        for idx, (_start, end, level, title) in enumerate(positions):
             start_of_next = None
             if idx < len(positions) - 1:
                 start_of_next = positions[idx + 1][0]
