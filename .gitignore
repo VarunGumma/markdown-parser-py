@@ -3,3 +3,5 @@ dist/
 **/__pycache__/
 markdown_parser_py.egg-info/
 .coverage
+build/
+uv.lock

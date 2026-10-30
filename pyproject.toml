@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,14 +7,13 @@ name = "markdown-parser-py"
 version = "1.0.1"
 description = "Parse, Manipulate, and Merge Markdown Heading Trees Programmatically."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
   { name = "Varun Gumma", email = "varun230999@gmail.com" }
 ]
 keywords = ["markdown", "parser", "tree", "document"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.10"
@@ -29,6 +28,9 @@ Issues = "https://github.com/VarunGumma/markdown-parser-py/issues"
 
 [tool.setuptools]
 packages = ["markdown_parser"]
+
+[tool.setuptools.package-data]
+markdown_parser = ["py.typed"]
 
 [tool.setuptools.dynamic]
 # (Optional) can move version to a single source if you later adopt dynamic versioning
@@ -48,8 +50,6 @@ ignore_missing_imports = true
 
 [dependency-groups]
 dev = [
-  "pytest>=8.0",
-  "pytest-cov>=7.0",
   "black>=24.0",
   "isort>=5.13",
   "mypy>=1.8"

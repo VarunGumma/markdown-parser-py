@@ -1,163 +1,108 @@
-<div align="center">
-
 # markdown-parser-py
 
-Turn raw Markdown into a manipulable heading tree, edit it programmatically, then emit valid Markdown again.
+Parse a Markdown document into a heading tree, edit its sections, and write it back to Markdown. Unedited documents round-trip exactly as Python strings, including their preamble, heading syntax, blank lines, and line endings.
 
-![status](https://img.shields.io/badge/status-experimental-orange)
-![python](https://img.shields.io/badge/python-3.10+-blue)
+The package supports Python 3.10 and later. Its own block scanner identifies section headings and their surrounding Markdown.
 
-</div>
-
-## ✨ Features
-
-- Parse Markdown into a hierarchical tree of headings (levels 1–6)
-- Preserve and round‑trip section body content
-- Query sections via simple dot paths (e.g. `Introduction.Installation.Windows`)
-- Add / remove sections dynamically
-- Attach (merge) whole subtrees across different Markdown documents with automatic heading level adjustment
-- Dump back to Markdown or visualize structure in a `tree`-like ASCII output
-
-## 📦 Installation
+## Installation
 
 ```bash
 pip install markdown-parser-py
 ```
 
-or, for an editable install
+For development:
 
 ```bash
 git clone https://github.com/VarunGumma/markdown-parser-py
 cd markdown-parser-py
-pip install -e ./
+pip install -e .
 ```
 
-## 🧠 Core Concepts
-
-The model is minimal:
-
-```text
-MarkdownTree
-└── root (MarkdownNode level=0, title="ROOT")
-	├── Child heading (level=1 => '#')
-	│   └── Grandchild (level=2 => '##')
-	└── ...
-```
-
-Each `MarkdownNode` stores:
-
-- `level`: 0 for synthetic root; 1–6 for real headings
-- `title`: heading text
-- `content`: list of raw paragraph / code / list text blocks under that heading (excluding child headings)
-- `children`: nested headings
-
-## 🚀 Quick Start
+## Parse and edit a document
 
 ```python
 from markdown_parser import MarkdownTree
-
-doc = """
-# Intro
-Some intro text.
-
-## Install
-Run `pip install x`.
-
-## Usage
-Basic usage here.
-
-### CLI
-Run `tool`.
-"""
 
 tree = MarkdownTree()
-tree.parse(doc)
+tree.parse("""Introduction before the first heading.
 
-print('\n=== Visualize ===')
-tree.visualize()
+# Guide
+A short guide.
 
-print('\n=== Dump Round Trip ===')
+## Installation
+Run `pip install example`.
+""")
+
+installation = tree.find_node_by_path("Guide.Installation")
+assert installation is not None
+print(installation.content)
+
+tree.add_section("Guide", "Usage", "Import and use the package.")
 print(tree.dump())
+tree.visualize()
 ```
 
-Output (visualize):
+`parse()` replaces the tree's previous contents. The synthetic root has level 0; headings have levels 1–6. Every node has a `title`, `level`, `content` list, `children` list, and `parent`. A heading belongs to the nearest preceding heading with a smaller level, even if levels are skipped. Text before the first heading belongs to the root.
 
-```text
-└── # Intro
-	├── ## Install
-	└── ## Usage
-		└── ### CLI
-```
+A node's title is Markdown source, including inline formatting, rather than rendered plain text. ATX opening and closing markers and Setext underlines are excluded. Titles can be empty. Section content excludes child sections. Parsed `content` entries omit surrounding blank lines for convenient access, while unchanged source is retained separately for serialization. `add_content()` appends the supplied text as a new content entry; entries are joined with a newline when edited content is written.
 
-## 🔍 Finding Sections
+## Find sections
+
+Dot paths select titles from the root downward. A missing path returns `None`:
 
 ```python
-node = tree.find_node_by_path('Intro.Install')  # '# Intro' > '## Install'
-if node:
-	print('Found:', node.title, 'level', node.level)
+node = tree.find_node_by_path("Guide.Installation")
 ```
 
-Dot paths walk downward by titles. A single component path refers to a top‑level heading (level 1). Returns `None` if not found.
-
-## ➕ Adding Sections
+Use a sequence for a title containing a literal dot, or for a top-level section named `ROOT`:
 
 ```python
-new = tree.add_section('Intro', 'Advanced', content='Deep dive coming soon.')
-print('Added at level', new.level)
+node = tree.find_node_by_path(["Version 1.0", "Installation"])
 ```
 
-If `parent_path` is `""` or `"ROOT"`, the new section becomes a top‑level heading.
-
-## ➖ Removing Sections
+`find_nodes_by_path(path)` returns all complete matches in document order. `find_node_by_path(path)` and mutators taking a path choose the first complete match. To edit a particular duplicate, pass the returned node directly:
 
 ```python
-tree.remove_section('Intro.Advanced')  # removes that subtree
+matches = tree.find_nodes_by_path(["Repeated heading"])
+if len(matches) > 1:
+    tree.add_section(matches[1], "Child", "Text")
+    tree.remove_section(matches[0])
 ```
 
-## 🔗 Attaching / Merging Subtrees
+An empty string or empty sequence refers to the root. For `add_section()` and `attach_subtree()` only, the string `"ROOT"` is also a root shortcut; use `["ROOT"]` for a heading with that title. `remove_section()` returns a boolean, and `add_section()` returns the new node or `None` when the parent is missing.
 
-You can merge content from another parsed Markdown document. Levels auto-adjust so the attached subtree root sits exactly one level below the chosen parent.
+## Copy sections between documents
 
 ```python
-from markdown_parser import MarkdownTree
-
 base = MarkdownTree()
-base.parse('# A\nIntro text.')
+base.parse("# Guide\nGuide text.\n")
 
-other = MarkdownTree()
-other.parse('# Extra\nStuff here.\n\n## Deep\nDetails.')
+appendix = MarkdownTree()
+appendix.parse("# Extra\nMore text.\n\n## Details\nDetails here.\n")
 
-# Attach ALL top-level sections from other under 'A'
-base.attach_subtree('A', other)  # Equivalent to source_path=None
+# Copy every top-level section below Guide.
+attached = base.attach_subtree("Guide", appendix)
 
-# Or attach only a specific subsection
-# base.attach_subtree('A', other, source_path='Extra.Deep')
-
-base.visualize()
-print(base.dump())
+# Or copy just one section, selected by path or node handle.
+# attached = base.attach_subtree("Guide", appendix, ["Extra", "Details"])
 ```
 
-If you attach the full tree (`source_path=None` / `'ROOT'`), each top-level section in the source is cloned with level adjusted: `new_level = parent.level + original_level`.
+Copies are independent of the source. Each copied root is placed one heading level below the target; differences in level within its subtree are preserved. Copying all sections copies the root's **children**, not source preamble text. Pass that text explicitly if the composed document needs it. Attaching a tree to itself is supported.
 
-## 🧪 Advanced Example: Composing Documents
+Markdown has only six heading levels. If a section cannot fit at the destination, `add_section()` or `attach_subtree()` raises `ValueError` rather than silently flattening it. Attachment validates all requested sections before changing the destination. `max_level` can set a stricter upper bound from 1 to 6. A multiline Setext title cannot in general be relevelled without changing its inline meaning; such an attachment raises `ValueError`.
+
+At the lower level, `MarkdownNode.add_child()` moves a node, updates its parent, and rejects cycles and invalid heading levels; it does not relevel the node. `remove_child()` detaches it. `copy_with_level_delta()` rejects levels outside its allowed range instead of clamping them. Directly editing `children`, `parent`, or `level` can bypass these checks.
+
+## Markdown behavior and validation
+
+The parser recognizes top-level ATX and Setext headings. Heading-like text inside fenced or indented code, HTML blocks, block quotes, and lists remains section content. Markdown inside a container is not represented as a separate section tree. The scanner aims to follow CommonMark block rules when identifying headings; it does not render Markdown or enable GitHub-specific extensions such as tables. It is not certified as a complete CommonMark implementation, and unusual combinations of nested blocks may still expose edge cases.
+
+A complete initial block starting with `---` and ending with `---` or `...` is treated as front matter and kept in the root content. This convention is ambiguous with ordinary Markdown. To disable this convention and scan the document without special front matter handling, use:
 
 ```python
-def compose(product_readme: str, appendix_md: str) -> str:
-	main_tree = MarkdownTree()
-	main_tree.parse(product_readme)
-
-	appendix_tree = MarkdownTree()
-	appendix_tree.parse(appendix_md)
-
-	# Ensure an Appendix section exists
-	if not main_tree.find_node_by_path('Appendix'):
-		main_tree.add_section('', 'Appendix')
-
-	# Attach all appendix top-level sections under Appendix
-	main_tree.attach_subtree('Appendix', appendix_tree)
-	return main_tree.dump()
+tree.parse(markdown_text, front_matter=False)
 ```
 
-## 📝 Disclaimer
+`dump()` preserves original source for unchanged headings and content, and regenerates only edited parts. File decoding and newline handling are the caller's responsibility: for example, read with `open(path, encoding="utf-8", newline="")` if preserving file line endings matters.
 
-This is an early/experimental utility. Edge cases (nested fenced code blocks, Setext headings, ATX heading oddities, HTML blocks) are not fully supported yet.
+By default, `dump()` validates the tree and, after edits, reparses the result to check that its section titles and levels still match the tree. This catches cases such as adding a heading after an unclosed code fence or adding heading syntax inside content. It raises `ValueError` if the hierarchy cannot be represented. `dump(validate=False)` skips this check when the caller explicitly prefers to handle that risk. Validation uses this same scanner, so it cannot detect a mistake shared by parsing and validation. It checks heading structure, not every aspect of rendered Markdown: moving content can change the meaning of reference links, HTML, or other context-dependent constructs.
